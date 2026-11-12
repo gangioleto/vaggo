@@ -1,3 +1,4 @@
 # código-fonte da animação (Remotion): não faz parte do site publicado
-video/
-README.md
+# a barra inicial limita à pasta da raiz — assets/video continua publicado
+/video/
+/README.md
