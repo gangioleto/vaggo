@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#F5F6FA">
+  <meta name="description" content="VAGGO — conectando você ao profissional ideal. Vagas e profissionais de serviços domésticos em um só lugar.">
+  <title>VAGGO — Conectando você ao profissional ideal</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    document.documentElement.classList.add('js');
+    // aplica o tema salvo antes de pintar a página (evita "piscar")
+    try { if (localStorage.getItem('vaggo.theme') === 'dark') document.documentElement.dataset.theme = 'dark'; } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">Pular para o conteúdo</a>
+
+  <header class="topbar">
+    <div class="wrap topbar__in">
+      <a class="brand" href="#inicio" aria-label="VAGGO — início">
+        <img class="logo-l" src="assets/logo-full.png" alt="VAGGO" width="139" height="34">
+        <img class="logo-d" src="assets/logo-full-white.png" alt="VAGGO" width="139" height="34">
+      </a>
+      <nav id="nav" aria-label="Principal"></nav>
+      <div class="topbar__actions" id="actions"></div>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <noscript>
+      <p style="padding:40px 20px;text-align:center">O VAGGO precisa de JavaScript para funcionar. Ative-o no navegador e recarregue a página.</p>
+    </noscript>
+  </main>
+
+  <footer id="footer"></footer>
+
+  <dialog id="modal" aria-label="VAGGO"></dialog>
+  <div id="toasts" aria-live="polite"></div>
+
+  <!--
+    Ordem de carregamento = ordem de dependência das classes.
+    Scripts clássicos (sem "type=module") para o projeto abrir
+    com dois cliques no index.html, sem precisar de servidor.
+  -->
+  <!-- núcleo -->
+  <script src="js/core/errors.js"></script>
+  <script src="js/core/enums.js"></script>
+  <script src="js/core/I18n.js"></script>
+  <script src="js/core/Theme.js"></script>
+  <script src="js/core/ServiceGuide.js"></script>
+  <!-- modelos (domínio) -->
+  <script src="js/models/User.js"></script>
+  <script src="js/models/Professional.js"></script>
+  <script src="js/models/Employer.js"></script>
+  <script src="js/models/Job.js"></script>
+  <script src="js/models/Application.js"></script>
+  <!-- serviços (regras e armazenamento) -->
+  <script src="js/services/Storage.js"></script>
+  <script src="js/services/MatchScore.js"></script>
+  <script src="js/services/SeedData.js"></script>
+  <script src="js/services/VaggoPlatform.js"></script>
+  <!-- interface -->
+  <script src="js/ui/UI.js"></script>
+  <script src="js/ui/Motion.js"></script>
+  <script src="js/ui/Dropdown.js"></script>
+  <script src="js/ui/Portrait.js"></script>
+  <script src="js/ui/Corridor.js"></script>
+  <script src="js/ui/View.js"></script>
+  <script src="js/ui/HomeView.js"></script>
+  <script src="js/ui/ListViews.js"></script>
+  <script src="js/ui/DashboardView.js"></script>
+  <script src="js/ui/ProjectView.js"></script>
+  <script src="js/ui/Dialogs.js"></script>
+  <script src="js/ui/App.js"></script>
+</body>
+</html>
