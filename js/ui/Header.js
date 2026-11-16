@@ -58,10 +58,10 @@ class Header {
       this.#nav.addEventListener('pointerleave', () => this.#movePill(this.#activeLink));
     }
 
-    // Depois da entrada da logo, libera as animações de passar o mouse.
+    // Quando a última letra termina de entrar, começa o ciclo contínuo da logo.
     const logo = this.#el.querySelector('.logo');
     const ready = () => logo.classList.add('is-ready');
-    logo.addEventListener('animationend', (event) => { if (event.animationName === 'logo-word') ready(); });
+    logo.querySelector('.logo__l:last-child').addEventListener('animationend', ready, { once: true });
     setTimeout(ready, 1800);                 // garantia (ex.: "reduzir movimento")
   }
 
