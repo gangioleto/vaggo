@@ -18,13 +18,22 @@
   <a class="skip" href="#main">Pular para o conteúdo</a>
 
   <header class="topbar">
-    <div class="wrap topbar__in">
-      <a class="brand" href="#inicio" aria-label="VAGGO — início">
-        <img class="logo-l" src="assets/logo-full.png" alt="VAGGO" width="139" height="34">
-        <img class="logo-d" src="assets/logo-full-white.png" alt="VAGGO" width="139" height="34">
-      </a>
-      <nav id="nav" aria-label="Principal"></nav>
-      <div class="topbar__actions" id="actions"></div>
+    <div class="wrap">
+      <div class="topbar__in">
+        <a class="brand" href="#inicio" aria-label="VAGGO — início">
+          <!-- a logo em três camadas (V, órbita e nome), para poder animar cada parte -->
+          <span class="logo" aria-hidden="true">
+            <img class="logo__v logo-l" src="assets/logo/v.png" alt="" width="533" height="130">
+            <img class="logo__v logo-d" src="assets/logo/v-white.png" alt="" width="533" height="130">
+            <span class="logo__orbit"><img src="assets/logo/orbit.png" alt="" width="533" height="130"><i class="logo__glint"></i></span>
+            <img class="logo__word logo-l" src="assets/logo/word.png" alt="" width="533" height="130">
+            <img class="logo__word logo-d" src="assets/logo/word-white.png" alt="" width="533" height="130">
+          </span>
+        </a>
+        <nav id="nav" aria-label="Principal"></nav>
+        <div class="topbar__actions" id="actions"></div>
+        <span class="topbar__progress" aria-hidden="true"></span>
+      </div>
     </div>
   </header>
 
@@ -73,6 +82,7 @@
   <script src="js/ui/DashboardView.js"></script>
   <script src="js/ui/ProjectView.js"></script>
   <script src="js/ui/Dialogs.js"></script>
+  <script src="js/ui/Header.js"></script>
   <script src="js/ui/App.js"></script>
 </body>
 </html>

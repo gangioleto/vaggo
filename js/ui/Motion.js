@@ -68,13 +68,6 @@ class Motion {
     }
   }
 
-  /** Sombra no cabeçalho depois que a página rola. */
-  static watchHeader(header) {
-    const update = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
-    window.addEventListener('scroll', update, { passive: true });
-    update();
-  }
-
   /** O vídeo do topo só toca enquanto está visível. */
   static watchVideo(root) {
     const video = root.querySelector('video.film__video');

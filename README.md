@@ -27,7 +27,7 @@ js/
   core/      errors.js · enums.js · I18n.js · Theme.js · ServiceGuide.js
   models/    User (abstrata) · Professional · Employer · Job · Application
   services/  Storage (StorageAdapter, Repository) · MatchScore · SeedData · VaggoPlatform
-  ui/        UI · Motion · Dropdown · Portrait · Corridor (topo em 3D) · View (abstrata) · HomeView · ListViews · DashboardView · ProjectView · Dialogs · App
+  ui/        UI · Motion · Header (cabeçalho e logo animada) · Dropdown · Portrait · Corridor (topo em 3D) · View (abstrata) · HomeView · ListViews · DashboardView · ProjectView · Dialogs · App
 assets/      logos, fontes, vídeo e retratos (assets/people)
 video/       código-fonte Remotion da animação do topo
 ```

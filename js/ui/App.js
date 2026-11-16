@@ -6,22 +6,17 @@
 
 class App {
   static #ROUTES = Object.freeze(['inicio', 'vagas', 'profissionais', 'painel', 'projeto']);
-  static #NAV = Object.freeze([
-    { route: 'inicio', key: 'nav.home', icon: 'home' },
-    { route: 'vagas', key: 'nav.jobs', icon: 'briefcase' },
-    { route: 'profissionais', key: 'nav.pros', icon: 'users' },
-    { route: 'painel', key: 'nav.dash', icon: 'user' },
-    { route: 'projeto', key: 'nav.project', icon: 'cube' },
-  ]);
 
   #views;
   #dialogs;
+  #header;
   #lastRoute = null;
 
   constructor(platform, i18n) {
     this.platform = platform;
     this.i18n = i18n;
     this.#dialogs = new Dialogs(this);
+    this.#header = new Header(this); // o cabeçalho cuida de si mesmo
     // Todas são View: o App trata qualquer uma do mesmo jeito.
     this.#views = new Map([
       ['inicio', new HomeView(this)],
@@ -57,7 +52,6 @@ class App {
 
     this.render();
     Dropdown.watch(); // troca os <select> nativos pelo dropdown estilizado
-    Motion.watchHeader(document.querySelector('.topbar'));
   }
 
   // ---------- desenho ----------
@@ -66,7 +60,7 @@ class App {
     const changed = route !== this.#lastRoute;
     const main = document.getElementById('main');
 
-    this.#renderHeader();
+    this.#header.render();
     main.classList.toggle('is-static', instant || !changed);
     main.innerHTML = this.view.render();
     this.#renderFooter();
@@ -83,42 +77,7 @@ class App {
     Motion.reveal(document.getElementById('footer'), { instant: true });
     if (!quiet) Motion.countUp(main);
     Motion.watchVideo(main);
-  }
-
-  #renderHeader() {
-    const t = (k, v) => this.i18n.t(k, v);
-    const user = this.platform.currentUser;
-    const route = this.route;
-
-    document.getElementById('nav').innerHTML = App.#NAV.map((item) => `
-      <a href="#${item.route}" class="nav__link" ${item.route === route ? 'aria-current="page"' : ''}>
-        ${UI.icon(item.icon, 20)}<span>${UI.esc(t(item.key))}</span>
-      </a>`).join('');
-
-    const langSwitch = `
-      <div class="lang" role="group" aria-label="Idioma / Language">
-        ${I18n.LANGS.map((code) => `
-          <button class="lang__btn ${code === this.i18n.lang ? 'is-on' : ''}" data-action="setLang" data-lang="${code}"
-            aria-pressed="${code === this.i18n.lang}">${code.toUpperCase()}</button>`).join('')}
-      </div>`;
-
-    const dark = Theme.isDark;
-    const themeLabel = t(dark ? 'theme.toLight' : 'theme.toDark');
-    const themeSwitch = `
-      <button class="iconbtn" data-action="toggleTheme" aria-label="${UI.esc(themeLabel)}" title="${UI.esc(themeLabel)}" aria-pressed="${dark}">
-        ${UI.icon(dark ? 'sun' : 'moon', 20)}
-      </button>`;
-
-    const account = user ? `
-      <a class="userchip" href="#painel" title="${UI.esc(user.name)}">
-        ${UI.avatar(user, 'sm')}<span>${UI.esc(user.name.split(' ')[0])}</span>
-      </a>
-      <button class="iconbtn" data-action="logout" aria-label="${UI.esc(t('auth.logout'))}" title="${UI.esc(t('auth.logout'))}">${UI.icon('logout', 20)}</button>` : `
-      <button class="btn btn--ghost btn--sm hide-sm" data-action="openAuth" data-mode="login">${UI.esc(t('auth.login'))}</button>
-      <button class="btn btn--primary btn--sm" data-action="openAuth" data-mode="register">${UI.esc(t('auth.create'))}</button>`;
-
-    document.getElementById('actions').innerHTML = langSwitch + themeSwitch + account;
-    document.querySelector('.skip').textContent = t('skip');
+    this.#header.sync(); // a altura da página mudou
   }
 
   #renderFooter() {
@@ -130,7 +89,7 @@ class App {
           <p>${UI.esc(t('footer.tag'))}</p>
         </div>
         <nav class="footer__nav" aria-label="Footer">
-          ${App.#NAV.map((item) => `<a href="#${item.route}">${UI.esc(t(item.key))}</a>`).join('')}
+          ${Header.NAV.map((item) => `<a href="#${item.route}">${UI.esc(t(item.key))}</a>`).join('')}
         </nav>
         <div class="footer__meta">
           <p>${UI.esc(t('footer.note'))}</p>
@@ -195,7 +154,7 @@ class App {
 
       // Troca o tema com uma transição suave, quando o navegador oferece.
       toggleTheme: () => {
-        const apply = () => { Theme.toggle(); this.#renderHeader(); };
+        const apply = () => { Theme.toggle(); this.#header.render(); };
         if (document.startViewTransition && !Motion.reduced) document.startViewTransition(apply);
         else apply();
       },
