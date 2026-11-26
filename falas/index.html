@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#161B27">
+<meta name="robots" content="noindex">
+<title>VAGGO · Falas do Pitch</title>
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<style>
+@font-face{font-family:Outfit;src:url(assets/outfit.woff2) format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:"DM Sans";src:url(assets/dm-sans.woff2) format("woff2");font-weight:100 900;font-display:swap}
+:root{
+  --blue:#3A49F8;--deep:#2A36D1;--glow:#A9B0FF;--night:#161B27;--night2:#1E2436;--night3:#272E44;
+  --paper:#F5F6FA;--mist:#C9CDE0;--dim:#8A90A6;--line:rgba(201,205,224,.14);
+  --ok:#3DDC97;--warn:#FFB547;--bad:#FF5C6C;
+  --ease:cubic-bezier(.23,1,.32,1);
+  --fs:1;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--night);color:var(--paper);font-family:"DM Sans",system-ui,sans-serif;overscroll-behavior:none}
+body{min-height:100dvh}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+[hidden]{display:none!important}
+.hue-1{--hue:#3A49F8}.hue-2{--hue:#8B5CF6}.hue-3{--hue:#0EA5A0}.hue-4{--hue:#F59E0B}.hue-5{--hue:#EC4899}
+
+/* ---------- HOME ---------- */
+.home{min-height:100dvh;padding:max(28px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(28px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));display:flex;flex-direction:column;align-items:center;position:relative;overflow:hidden}
+.home::before{content:"";position:absolute;inset:-30% -20% auto;height:70%;background:radial-gradient(closest-side,rgba(58,73,248,.35),transparent);pointer-events:none}
+.home__in{width:100%;max-width:720px;position:relative;display:flex;flex-direction:column;gap:22px}
+.home__logo{height:34px;width:auto;align-self:flex-start}
+.home h1{font-family:Outfit,sans-serif;font-size:clamp(30px,6vw,46px);line-height:1.05;letter-spacing:-.02em;margin:6px 0 0}
+.home .sub{color:var(--mist);font-size:16px;margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:13px;font-weight:700;padding:6px 12px;border-radius:999px;background:rgba(169,176,255,.12);color:var(--glow)}
+.label{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--glow);margin:8px 0 -8px}
+.people{display:grid;gap:12px}
+.person{display:flex;align-items:center;gap:16px;text-align:left;width:100%;padding:16px 18px;border-radius:20px;background:var(--night2);border:1px solid var(--line);transition:transform .16s var(--ease),background-color .2s,border-color .2s}
+.person:active{transform:scale(.98)}
+@media (hover:hover) and (pointer:fine){.person:hover{background:var(--night3);border-color:var(--hue)}}
+.person .num{flex:none;width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-family:Outfit;font-weight:700;font-size:24px;background:var(--hue);color:#fff}
+.person .who{flex:1;min-width:0}
+.person .nm{font-family:Outfit;font-size:21px;font-weight:600;display:block}
+.person .ds{font-size:14px;color:var(--mist);display:block;margin-top:2px}
+.person .go{flex:none;color:var(--dim);font-size:22px}
+.person.last{outline:2px solid var(--hue);outline-offset:2px}
+.all{display:flex;align-items:center;justify-content:center;gap:10px;padding:16px;border-radius:18px;border:1.5px dashed rgba(169,176,255,.4);color:var(--glow);font-weight:700}
+.howto{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.howto div{background:rgba(255,255,255,.04);border-radius:14px;padding:12px;font-size:13px;color:var(--mist);line-height:1.35}
+.howto b{display:block;color:var(--paper);font-size:14px;margin-bottom:2px}
+@media (max-width:520px){.howto{grid-template-columns:1fr}}
+
+/* ---------- STAGE ---------- */
+.stage{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--night);user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.bar{position:relative;z-index:3;display:flex;align-items:center;gap:10px;padding:max(10px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) 10px max(14px,env(safe-area-inset-left))}
+.icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.06);font-size:18px;flex:none}
+.icon[aria-pressed="true"]{background:var(--blue);color:#fff}
+.bar .me{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+.bar .dot{width:12px;height:12px;border-radius:6px;background:var(--hue);flex:none}
+.bar .me b{font-family:Outfit;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.timer{font-family:Outfit;font-weight:700;font-variant-numeric:tabular-nums;font-size:18px;padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.06);white-space:nowrap}
+.timer small{color:var(--dim);font-weight:500;font-size:13px}
+.timer.warn{background:rgba(255,181,71,.18);color:var(--warn)}
+.timer.over{background:rgba(255,92,108,.2);color:var(--bad)}
+.progress{height:4px;background:rgba(255,255,255,.08);position:relative;z-index:3}
+.progress i{position:absolute;inset:0 auto 0 0;background:var(--hue);transform-origin:left;transition:transform .3s var(--ease);width:100%}
+.view{flex:1;position:relative;overflow:hidden;cursor:pointer}
+.card{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:clamp(14px,2.6vh,26px);padding:clamp(16px,4vw,64px) max(clamp(20px,6vw,96px),env(safe-area-inset-right)) clamp(16px,4vw,48px) max(clamp(20px,6vw,96px),env(safe-area-inset-left))}
+.card.enter{animation:cardIn .32s var(--ease) both}
+.card.enter.back{animation-name:cardBack}
+@keyframes cardIn{from{opacity:0;transform:translateX(36px)}}
+@keyframes cardBack{from{opacity:0;transform:translateX(-36px)}}
+@media (prefers-reduced-motion:reduce){.card.enter{animation:fadeIn .2s ease both}@keyframes fadeIn{from{opacity:0}}}
+.meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.tag{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.07);color:var(--mist)}
+.tag.slide{background:var(--hue);color:#fff}
+.switch{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:16px;background:rgba(58,73,248,.16);border:1.5px solid rgba(169,176,255,.45);color:var(--paper);font-weight:700;font-size:calc(17px*var(--fs))}
+.switch .arr{font-size:22px}
+.switch small{display:block;font-weight:500;color:var(--mist);font-size:calc(14px*var(--fs));margin-top:2px}
+.en{font-family:Outfit,sans-serif;font-weight:600;letter-spacing:-.015em;line-height:1.12;font-size:calc(clamp(30px,5.4vw,68px)*var(--fs));margin:0;text-wrap:balance}
+.pt{font-size:calc(clamp(17px,2.1vw,26px)*var(--fs));color:var(--mist);font-style:italic;margin:0;line-height:1.35}
+.tip{font-size:calc(15px*var(--fs));color:var(--warn);font-weight:600;display:flex;gap:8px;align-items:flex-start}
+.next{position:absolute;left:0;right:0;bottom:0;padding:14px max(clamp(20px,6vw,96px),env(safe-area-inset-left)) max(16px,env(safe-area-inset-bottom));color:var(--dim);font-size:15px;border-top:1px solid var(--line);background:linear-gradient(transparent,rgba(0,0,0,.25));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.next b{color:var(--mist);font-weight:700}
+.count{position:absolute;right:max(16px,env(safe-area-inset-right));top:12px;font-size:13px;color:var(--dim);font-variant-numeric:tabular-nums}
+.hint{position:absolute;left:50%;top:14px;transform:translateX(-50%);font-size:13px;color:var(--dim);white-space:nowrap}
+/* special cards */
+.big{font-family:Outfit;font-weight:700;letter-spacing:-.02em;line-height:1.02;font-size:calc(clamp(40px,8vw,96px)*var(--fs));margin:0}
+.big .h{color:var(--hue)}
+.say{display:inline-block;font-family:Outfit;font-weight:600;font-size:calc(clamp(24px,3.6vw,40px)*var(--fs));padding:12px 20px;border-radius:16px;background:var(--hue);color:#fff;align-self:flex-start}
+.done{color:var(--ok);font-weight:700;font-size:18px}
+.wait{color:var(--mist);font-size:calc(18px*var(--fs));line-height:1.45;max-width:46ch}
+.wait b{color:var(--paper)}
+.zone{position:absolute;top:0;bottom:0;left:0;width:28%;z-index:2}
+.card{z-index:1}
+.flash{position:absolute;inset:0;pointer-events:none;background:var(--hue);opacity:0}
+.flash.on{animation:fl .5s ease-out}
+@keyframes fl{0%{opacity:.18}100%{opacity:0}}
+
+/* sheet */
+.sheet{position:fixed;inset:0;z-index:10;background:rgba(10,12,20,.6);display:flex;align-items:flex-end;justify-content:center}
+.sheet__in{width:100%;max-width:760px;max-height:88dvh;overflow:auto;background:var(--night2);border-radius:24px 24px 0 0;padding:20px max(20px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));animation:up .28s var(--ease) both}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.sheet h2{font-family:Outfit;font-size:24px;margin:0 0 4px}
+.sheet h3{font-family:Outfit;font-size:17px;margin:20px 0 8px;color:var(--glow)}
+.sheet .row{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.04);margin-bottom:8px}
+.sheet .q{font-size:14px;color:var(--mist)}
+.sheet .q b{color:var(--paper)}
+.sheet .a{font-family:Outfit;font-size:20px;font-weight:600;margin:6px 0 2px}
+.sheet .p{font-size:14px;color:var(--dim);font-style:italic}
+.sheet .close{float:right}
+.sheet .who{font-size:12px;font-weight:700;color:var(--glow);text-transform:uppercase;letter-spacing:.08em}
+.tools{display:flex;gap:8px}
+@media (max-width:560px){.bar .me b{font-size:15px}.timer{font-size:16px;padding:8px 10px}.icon{width:38px;height:38px}.hide-sm{display:none}}
+</style>
+</head>
+<body>
+
+<main id="home" class="home" hidden>
+  <div class="home__in">
+    <img class="home__logo" src="assets/logo-full-white.png" alt="VAGGO" width="533" height="130">
+    <div>
+      <h1>Falas do pitch</h1>
+      <p class="sub">Escolha seu nome. Suas falas aparecem uma de cada vez, em inglês, com a tradução embaixo.</p>
+    </div>
+    <div class="chips"><span class="chip">Qui · 26/11</span><span class="chip">Máx. 5 min</span><span class="chip">Tudo em inglês</span><span class="chip">10 slides</span></div>
+    <p class="label">Quem é você?</p>
+    <div class="people" id="people"></div>
+    <button class="all" data-go="all">▶ Ensaio geral: todas as falas, em ordem</button>
+    <div class="howto">
+      <div><b>Toque na tela</b>ou aperte espaço / seta → para a próxima fala</div>
+      <div><b>Errou?</b>Toque no lado esquerdo ou seta ← para voltar</div>
+      <div><b>Cronômetro</b>Começa no 1º toque e mostra seu tempo-alvo</div>
+    </div>
+  </div>
+</main>
+
+<section id="stage" class="stage" hidden>
+  <div class="bar">
+    <button class="icon" id="btnHome" aria-label="Voltar para a lista de nomes">←</button>
+    <div class="me"><span class="dot"></span><b id="meName"></b></div>
+    <div class="timer" id="timer">0:00 <small></small></div>
+    <div class="tools">
+      <button class="icon" id="btnPt" aria-label="Mostrar ou esconder a tradução" aria-pressed="true">PT</button>
+      <button class="icon hide-sm" id="btnSmaller" aria-label="Diminuir letra">A−</button>
+      <button class="icon" id="btnBigger" aria-label="Aumentar letra">A+</button>
+      <button class="icon" id="btnQa" aria-label="Perguntas e frases de socorro">?</button>
+    </div>
+  </div>
+  <div class="progress"><i id="prog"></i></div>
+  <div class="view" id="view">
+    <div class="zone" id="zoneBack" aria-hidden="true"></div>
+    <div class="flash" id="flash"></div>
+  </div>
+</section>
+
+<div class="sheet" id="sheet" hidden><div class="sheet__in" id="sheetIn"></div></div>
+
+<script>
+const DATA = {"people": [{"id": "leonardo", "name": "Leonardo Gabriel", "first": "Leonardo", "order": 1, "time": "0:00 – 0:55", "role": "Você abre a apresentação: cumprimenta, faz a pergunta que prende a atenção e mostra o problema.", "receives": null, "next": "Arthur", "slides": [{"n": 1, "title": "Capa", "stage": "Introduction (abertura)", "action": "Sorria e olhe para a turma. Passe o slide depois de dizer \"VAGGO\".", "lines": [["Good morning, everyone. Thank you for being here today.", "Bom dia a todos. Obrigado por estarem aqui hoje."], ["We are Leonardo, Arthur, César, Gabriel and Cauã.", "Somos Leonardo, Arthur, César, Gabriel e Cauã."], ["Our project is called VAGGO.", "Nosso projeto se chama VAGGO."]]}, {"n": 2, "title": "Gancho (o número)", "stage": "Hook (gancho)", "action": "Faça uma pausa de 1 segundo depois da pergunta. Aponte para o \"5.6 million\".", "lines": [["First, a question.", "Primeiro, uma pergunta."], ["Do you need a nanny, a cleaner or a caregiver?", "Você precisa de uma babá, uma diarista ou um cuidador?"], ["Who can you trust?", "Em quem você pode confiar?"], ["In Brazil, five point six million people work in homes.", "No Brasil, 5,6 milhões de pessoas trabalham em casas."], ["Ninety-two percent are women.", "92% são mulheres."], ["And three in four have no formal contract.", "E 3 em cada 4 não têm carteira assinada."]]}, {"n": 3, "title": "O problema", "stage": "The problem (o problema)", "action": "Aponte para o lado esquerdo e depois para o direito. Olhe para o Arthur ao passar a palavra.", "lines": [["We identified an important problem, on two sides.", "Identificamos um problema importante, dos dois lados."], ["Workers find jobs only with friends and WhatsApp.", "Os trabalhadores só acham emprego com amigos e WhatsApp."], ["And families don't know who to trust.", "E as famílias não sabem em quem confiar."], ["Arthur, please.", "Arthur, por favor."]]}], "questions": [["Does it work on phones?", "Funciona no celular?", "Yes. It works on computers and phones.", "Sim. Funciona no computador e no celular."]]}, {"id": "arthur", "name": "Arthur Cortez", "first": "Arthur", "order": 2, "time": "0:55 – 1:50", "role": "Você apresenta a solução: o que é o VAGGO, o slogan e como funciona em 3 passos.", "receives": "Leonardo", "next": "César", "slides": [{"n": 4, "title": "A solução", "stage": "Value proposition (a solução)", "action": "Mostre o print do site com a mão.", "lines": [["Thank you, Leonardo.", "Obrigado, Leonardo."], ["Our solution is VAGGO.", "Nossa solução é o VAGGO."], ["Our platform connects workers with families and companies.", "Nossa plataforma conecta trabalhadores a famílias e empresas."], ["Our slogan is: Your dream starts here.", "Nosso slogan é: Seu sonho começa aqui."], ["Look at our logo: the A has a little door. It means home.", "Olhem o logo: o A tem uma portinha. Significa lar."]]}, {"n": 5, "title": "Como funciona", "stage": "The solution (como funciona)", "action": "Conte nos dedos: um, dois, três.", "lines": [["It is very simple.", "É muito simples."], ["Step one: create your profile.", "Passo um: crie seu perfil."], ["Step two: find a job or a worker.", "Passo dois: encontre uma vaga ou um profissional."], ["Step three: connect and start to work.", "Passo três: conecte-se e comece a trabalhar."], ["César, please.", "César, por favor."]]}], "questions": [["Is it only for home services?", "É só para serviços domésticos?", "No. We started with home services. In the future, more jobs.", "Não. Começamos com serviços domésticos. No futuro, mais profissões."], ["How do you know a worker is good?", "Como saber se o profissional é bom?", "Today, with the profile. In the future, with reviews.", "Hoje, pelo perfil. No futuro, com avaliações."]]}, {"id": "cesar", "name": "César Zotovici", "first": "César", "order": 3, "time": "1:50 – 2:45", "role": "Você mostra a inovação (a nota de compatibilidade) e os benefícios para os dois públicos.", "receives": "Arthur", "next": "Gabriel", "slides": [{"n": 6, "title": "A inovação: Match Score", "stage": "Innovation (a inovação)", "action": "Aponte para cada barra quando falar 50, 30 e 20.", "lines": [["Thank you, Arthur.", "Obrigado, Arthur."], ["What is new in VAGGO? It is three in one: jobs, a professional network and services.", "O que o VAGGO tem de novo? É três em um: vagas, rede profissional e serviços."], ["And it has the Match Score.", "E tem a nota de compatibilidade."], ["VAGGO gives a score from zero to one hundred.", "O VAGGO dá uma nota de 0 a 100."], ["Fifty points for the service.", "50 pontos pelo serviço."], ["Thirty points for the city.", "30 pontos pela cidade."], ["Twenty points for the contract.", "20 pontos pelo contrato."], ["And it shows why.", "E ele mostra o porquê."]]}, {"n": 7, "title": "Os dois painéis", "stage": "The benefit (benefícios)", "action": "Aponte para o print da esquerda e depois para o da direita.", "lines": [["Each user has a different page.", "Cada usuário tem uma página diferente."], ["Workers see their applications.", "Os trabalhadores veem suas candidaturas."], ["Employers post jobs.", "Os contratantes publicam vagas."], ["And it works in Portuguese and English, on the computer and on the phone.", "E funciona em português e inglês, no computador e no celular."], ["Gabriel, please.", "Gabriel, por favor."]]}], "questions": [["How is VAGGO different?", "Qual a diferença do VAGGO?", "VAGGO has the Match Score. It shows why a job is good for you.", "O VAGGO tem a nota de compatibilidade. Mostra por que a vaga é boa para você."], ["How does the Match Score work?", "Como funciona a nota?", "Service, city and contract. Fifty, thirty and twenty points.", "Serviço, cidade e contrato. 50, 30 e 20 pontos."]]}, {"id": "gabriel", "name": "Gabriel Angioleto", "first": "Gabriel", "order": 4, "time": "2:45 – 3:45", "role": "Você explica a tecnologia e os 4 pilares de POO. É a parte \"Explain your technology\" que a professora pede.", "receives": "César", "next": "Cauã", "slides": [{"n": 8, "title": "A tecnologia", "stage": "Explain your technology", "action": "Aponte para cada um dos 4 cartões, na ordem. Fale devagar nos nomes dos pilares.", "lines": [["Thank you, César.", "Obrigado, César."], ["We made VAGGO with HTML, CSS and JavaScript.", "Fizemos o VAGGO com HTML, CSS e JavaScript."], ["We used object-oriented programming, like in Java.", "Usamos programação orientada a objetos, como em Java."], ["We used the four pillars.", "Usamos os quatro pilares."], ["One: encapsulation. The password is private.", "Um: encapsulamento. A senha é privada."], ["Two: inheritance. Professional and Employer come from User.", "Dois: herança. Professional e Employer vêm de User."], ["Three: abstraction. User is an abstract class.", "Três: abstração. User é uma classe abstrata."], ["Four: polymorphism. The same method gives different answers for different users.", "Quatro: polimorfismo. O mesmo método dá respostas diferentes para usuários diferentes."], ["The site is online now: vaggoprototipo dot vercel dot app.", "O site está no ar: vaggoprototipo.vercel.app."], ["Cauã, please.", "Cauã, por favor."]]}], "questions": [["Where is the data saved?", "Onde os dados ficam salvos?", "In the browser. It is a prototype.", "No navegador. É um protótipo."], ["Why JavaScript and not Java?", "Por que JavaScript e não Java?", "JavaScript is for the web. But we used the same ideas from Java.", "JavaScript é para a web. Mas usamos as mesmas ideias do Java."], ["Can you show polymorphism?", "Pode mostrar o polimorfismo?", "Yes. canApply is true for a Professional and false for an Employer.", "Sim. canApply é verdadeiro para Professional e falso para Employer."]]}, {"id": "caua", "name": "Cauã Olaia", "first": "Cauã", "order": 5, "time": "3:45 – 4:45", "role": "Você fecha: por que escolher o VAGGO, o futuro do projeto e a pergunta final para a professora.", "receives": "Gabriel", "next": null, "slides": [{"n": 9, "title": "Por que VAGGO e o futuro", "stage": "Selling your product (persuasão)", "action": "Fale \"saves time, reliable, easy to use\" devagar, com pausa entre cada um.", "lines": [["Thank you, Gabriel.", "Obrigado, Gabriel."], ["Why should you choose VAGGO? It saves time. It is reliable. It is easy to use.", "Por que escolher o VAGGO? Economiza tempo. É confiável. É fácil de usar."], ["In the future, we will add reviews, chat and notifications.", "No futuro, vamos adicionar avaliações, chat e notificações."], ["And more types of jobs.", "E mais tipos de trabalho."], ["We will offer subscription plans with extra features.", "Vamos oferecer planos de assinatura com recursos extras."]]}, {"n": 10, "title": "Encerramento", "stage": "The Ask + Closing (o pedido final)", "action": "Os cinco dão um passo à frente. Depois da pergunta final, sorria e espere em silêncio.", "lines": [["We believe in the potential of our project.", "Acreditamos no potencial do nosso projeto."], ["Could we schedule a meeting to discuss our solution?", "Podemos marcar uma reunião para discutir nossa solução?"], ["Thank you for your attention.", "Obrigado pela atenção."], ["Are there any questions?", "Há alguma pergunta?"]]}], "questions": [["How will VAGGO make money?", "Como o VAGGO vai ganhar dinheiro?", "With subscription plans with extra features.", "Com planos de assinatura com recursos extras."]]}], "help": [["Sorry, can you repeat, please?", "Desculpe, pode repetir, por favor?"], ["Good question.", "Boa pergunta."], ["Can my friend answer?", "Meu colega pode responder?"], ["That is in our future plans.", "Isso está nos nossos planos futuros."]]};
+
+const $ = (s) => document.querySelector(s);
+const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('vaggo.falas.' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('vaggo.falas.' + k, JSON.stringify(v)); } catch (e) {} },
+};
+const secs = (t) => { const [m, s] = t.split(':').map(Number); return m * 60 + s; };
+const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+const byFirst = Object.fromEntries(DATA.people.map((p) => [p.first, p]));
+
+/* Monta a sequência de cartões de uma pessoa (ou de todos). */
+function buildCards(people, ensemble) {
+  const cards = [];
+  people.forEach((p, pi) => {
+    if (ensemble) cards.push({ kind: 'turn', p });
+    p.slides.forEach((s, si) => {
+      s.lines.forEach((l, li) => {
+        const isHandoffLine = p.next && li === s.lines.length - 1 && si === p.slides.length - 1;
+        cards.push({
+          kind: 'line', p, s, en: l[0], pt: l[1],
+          first: li === 0, firstOfPerson: si === 0 && li === 0,
+          handoff: isHandoffLine,
+        });
+      });
+    });
+    if (!ensemble || pi === people.length - 1) cards.push({ kind: 'end', p, ensemble });
+  });
+  return cards;
+}
+
+let state = { key: null, people: [], cards: [], i: 0, start: null, target: 0, tick: null, wake: null };
+let pt = store.get('pt', true);
+let fs = store.get('fs', 1);
+document.documentElement.style.setProperty('--fs', fs);
+
+/* ---------- HOME ---------- */
+function renderHome() {
+  const last = store.get('last', null);
+  $('#people').innerHTML = DATA.people.map((p) => `
+    <button class="person hue-${p.order}${last === p.id ? ' last' : ''}" data-go="${p.id}">
+      <span class="num">${p.order}</span>
+      <span class="who"><span class="nm">${esc(p.name)}</span>
+      <span class="ds">Slides ${p.slides.map((s) => s.n).join(', ')} · ${esc(p.time)}${last === p.id ? ' · último acesso' : ''}</span></span>
+      <span class="go">→</span>
+    </button>`).join('');
+}
+
+/* ---------- STAGE ---------- */
+function open(key) {
+  const ensemble = key === 'all';
+  const people = ensemble ? DATA.people : DATA.people.filter((p) => p.id === key);
+  if (!people.length) { location.hash = ''; return; }
+  const p = people[0];
+  state = { ...state, key, people, ensemble, cards: buildCards(people, ensemble), i: 0, start: null,
+    target: ensemble ? 300 : secs(p.time.split('–')[1].trim()) - secs(p.time.split('–')[0].trim()) };
+  if (!ensemble) store.set('last', key);
+  $('#stage').className = `stage hue-${ensemble ? 1 : p.order}`;
+  $('#meName').textContent = ensemble ? 'Ensaio geral' : `${p.order}. ${p.first}`;
+  $('#home').hidden = true; $('#stage').hidden = false;
+  clearInterval(state.tick); state.tick = setInterval(drawTimer, 250);
+  drawTimer(); render(0); keepAwake();
+}
+
+function render(dir) {
+  const c = state.cards[state.i];
+  const view = $('#view');
+  view.querySelectorAll('.card,.next,.count,.hint').forEach((n) => n.remove());
+  const hueCls = `hue-${c.p.order}`;
+  let html = '';
+  if (c.kind === 'line') {
+    const changeSlide = c.first && !(c.firstOfPerson && c.p.slides[0].n === 1);
+    html = `<div class="card ${hueCls}">
+      <div class="meta"><span class="tag slide">Slide ${c.s.n}</span><span class="tag">${esc(c.s.title)}</span>${state.ensemble ? `<span class="tag">${esc(c.p.first)}</span>` : ''}</div>
+      ${changeSlide ? `<div class="switch"><span class="arr">➜</span><span>${c.firstOfPerson ? `Sua vez! Slide ${c.s.n} na tela` : `Passe para o slide ${c.s.n}`}<small>${esc(c.s.action)}</small></span></div>` : (c.first ? `<div class="tip">💡 ${esc(c.s.action)}</div>` : '')}
+      <p class="en">${esc(c.en)}</p>
+      ${pt ? `<p class="pt">${esc(c.pt)}</p>` : ''}
+      ${c.handoff ? `<div class="tip">👉 Olhe para ${esc(c.p.next)} ao dizer o nome</div>` : ''}
+    </div>`;
+  } else if (c.kind === 'turn') {
+    html = `<div class="card ${hueCls}">
+      <div class="meta"><span class="tag slide">${c.p.order}º a falar</span><span class="tag">${esc(c.p.time)}</span></div>
+      <p class="big">Agora: <span class="h">${esc(c.p.first)}</span></p>
+      <p class="wait">${esc(c.p.role)}${c.p.receives ? `<br>Começa quando <b>${esc(c.p.receives)}</b> disser <b>"${esc(c.p.first)}, please"</b>.` : ''}</p>
+    </div>`;
+  } else {
+    const e = c.ensemble;
+    html = `<div class="card ${hueCls}">
+      <p class="done">✓ ${e ? 'Fim da apresentação' : 'Fim da sua parte'} · ${fmt(elapsed())}</p>
+      ${!e && c.p.next ? `<p class="big">Passe para <span class="h">${esc(c.p.next)}</span></p><span class="say">"${esc(c.p.next)}, please."</span>
+        <p class="wait">Fique em pé ao lado do grupo e olhe para quem está falando. Se fizerem perguntas no final, toque em <b>?</b> para ver as suas.</p>`
+      : `<p class="big">Hora das <span class="h">perguntas</span></p>
+        <p class="wait">Os cinco dão um passo à frente. Sorriam e esperem. Não entendeu a pergunta? Diga <b>"Sorry, can you repeat, please?"</b> Toque em <b>?</b> para ver as respostas.</p>`}
+    </div>`;
+  }
+  view.insertAdjacentHTML('beforeend', html);
+  const card = view.querySelector('.card');
+  if (dir) { card.classList.add('enter'); if (dir < 0) card.classList.add('back'); }
+  // próxima fala
+  const nx = state.cards[state.i + 1];
+  if (nx) {
+    const t = nx.kind === 'line' ? (nx.p !== c.p && state.ensemble ? `${nx.p.first}: ${nx.en}` : nx.en)
+      : nx.kind === 'turn' ? `Vez de ${nx.p.first}` : (nx.p.next ? `Passar a palavra para ${nx.p.next}` : 'Perguntas');
+    view.insertAdjacentHTML('beforeend', `<div class="next"><b>Próxima:</b> ${esc(t)}</div>`);
+  }
+  view.insertAdjacentHTML('beforeend', `<div class="count">${state.i + 1}/${state.cards.length}</div>`);
+  if (state.i === 0 && !state.start) view.insertAdjacentHTML('beforeend', `<div class="hint">Toque na tela para avançar →</div>`);
+  $('#prog').style.transform = `scaleX(${(state.i + 1) / state.cards.length})`;
+}
+
+function go(d) {
+  if ($('#stage').hidden || !$('#sheet').hidden) return;
+  if (!state.start && d > 0) state.start = performance.now();
+  const n = Math.max(0, Math.min(state.cards.length - 1, state.i + d));
+  if (n === state.i) { if (d > 0) { const f = $('#flash'); f.classList.remove('on'); void f.offsetWidth; f.classList.add('on'); } return; }
+  state.i = n; render(d);
+}
+
+function elapsed() { return state.start ? (performance.now() - state.start) / 1000 : 0; }
+function drawTimer() {
+  const el = $('#timer'); const s = elapsed();
+  el.innerHTML = `${fmt(s)} <small>/ ${fmt(state.target)}</small>`;
+  el.className = 'timer' + (s > state.target ? ' over' : s > state.target - 10 ? ' warn' : '');
+}
+
+async function keepAwake() {
+  try { if ('wakeLock' in navigator && !document.hidden) state.wake = await navigator.wakeLock.request('screen'); } catch (e) {}
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden && !$('#stage').hidden) keepAwake(); });
+
+/* ---------- PERGUNTAS ---------- */
+function openSheet() {
+  const people = state.ensemble ? DATA.people : state.people;
+  const qs = people.flatMap((p) => p.questions.map((q) => ({ p, q })));
+  $('#sheetIn').innerHTML = `
+    <button class="icon close" id="btnClose" aria-label="Fechar">✕</button>
+    <h2>Se fizerem perguntas</h2>
+    <p class="q">Responda curto. Fale devagar.</p>
+    <h3>${state.ensemble ? 'Perguntas de cada um' : 'As suas perguntas'}</h3>
+    ${qs.map(({ p, q }) => `<div class="row">${state.ensemble ? `<div class="who">${esc(p.first)}</div>` : ''}
+      <div class="q">Se perguntarem: <b>${esc(q[0])}</b> (${esc(q[1])})</div>
+      <div class="a">${esc(q[2])}</div><div class="p">${esc(q[3])}</div></div>`).join('')}
+    <h3>Frases de socorro</h3>
+    ${DATA.help.map((h) => `<div class="row"><div class="a">${esc(h[0])}</div><div class="p">${esc(h[1])}</div></div>`).join('')}
+    <h3>Lembrete</h3>
+    <div class="row"><div class="q">Avaliações, chat, notificações, feed e planos ainda não existem no site. Se perguntarem, responda: <b>"That is in our future plans."</b></div></div>`;
+  $('#sheet').hidden = false;
+  $('#btnClose').onclick = closeSheet;
+}
+function closeSheet() { $('#sheet').hidden = true; }
+$('#sheet').addEventListener('click', (e) => { if (e.target.id === 'sheet') closeSheet(); });
+
+/* ---------- EVENTOS ---------- */
+document.addEventListener('click', (e) => {
+  const g = e.target.closest('[data-go]');
+  if (g) { location.hash = g.dataset.go; }
+});
+$('#view').addEventListener('click', (e) => { go(e.target.closest('#zoneBack') ? -1 : 1); });
+$('#btnHome').onclick = () => { location.hash = ''; };
+$('#btnPt').onclick = () => { pt = !pt; store.set('pt', pt); $('#btnPt').setAttribute('aria-pressed', pt); render(0); };
+$('#btnBigger').onclick = () => setFs(fs + 0.1);
+$('#btnSmaller').onclick = () => setFs(fs - 0.1);
+$('#btnQa').onclick = openSheet;
+function setFs(v) { fs = Math.round(Math.max(0.7, Math.min(1.6, v)) * 10) / 10; store.set('fs', fs); document.documentElement.style.setProperty('--fs', fs); }
+document.addEventListener('keydown', (e) => {
+  if (!$('#sheet').hidden) { if (e.key === 'Escape') closeSheet(); return; }
+  if ($('#stage').hidden) return;
+  if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); go(1); }
+  else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); go(-1); }
+  else if (e.key === 'Escape') location.hash = '';
+});
+// deslizar o dedo
+let tx = null;
+$('#view').addEventListener('touchstart', (e) => { tx = e.touches[0].clientX; }, { passive: true });
+$('#view').addEventListener('touchend', (e) => {
+  if (tx === null) return; const dx = e.changedTouches[0].clientX - tx; tx = null;
+  if (Math.abs(dx) > 60) { e.preventDefault(); go(dx < 0 ? 1 : -1); }
+});
+
+function route() {
+  closeSheet();
+  const key = location.hash.replace('#', '');
+  if (key === 'all' || DATA.people.some((p) => p.id === key)) open(key);
+  else { clearInterval(state.tick); $('#stage').hidden = true; $('#home').hidden = false; renderHome(); window.scrollTo(0, 0); }
+}
+window.addEventListener('hashchange', route);
+$('#btnPt').setAttribute('aria-pressed', pt);
+route();
+</script>
+</body>
+</html>
