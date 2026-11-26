@@ -2,154 +2,267 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" content="#161B27">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F5F6FA">
 <meta name="robots" content="noindex">
 <title>VAGGO · Falas do Pitch</title>
 <link rel="icon" type="image/png" href="assets/favicon.png">
+<script>
+  // aplica o tema antes de pintar (evita piscar)
+  (function () {
+    var t = null;
+    try { t = JSON.parse(localStorage.getItem('vaggo.falas.theme')); } catch (e) {}
+    if (t !== 'light' && t !== 'dark') t = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = t;
+  })();
+</script>
 <style>
 @font-face{font-family:Outfit;src:url(assets/outfit.woff2) format("woff2");font-weight:100 900;font-display:swap}
 @font-face{font-family:"DM Sans";src:url(assets/dm-sans.woff2) format("woff2");font-weight:100 900;font-display:swap}
+
+/* ---------- tokens do VAGGO (mesmos do site) ---------- */
 :root{
-  --blue:#3A49F8;--deep:#2A36D1;--glow:#A9B0FF;--night:#161B27;--night2:#1E2436;--night3:#272E44;
-  --paper:#F5F6FA;--mist:#C9CDE0;--dim:#8A90A6;--line:rgba(201,205,224,.14);
-  --ok:#3DDC97;--warn:#FFB547;--bad:#FF5C6C;
+  color-scheme:light;
+  --blue:#3A49F8;--blue-deep:#2A36D1;--blue-soft:#E9EBFF;--blue-soft-2:#DCE0FF;
+  --ink:#1E2432;--ink-2:#4B5268;--ink-3:#7A8198;
+  --bg:#F5F6FA;--surface:#FFFFFF;--surface-2:#FAFBFD;--line:#DFE2EC;--line-strong:#CDD2E4;
+  --ok:#12805C;--ok-soft:#DFF4EB;--warn:#8F5600;--warn-soft:#FFF0D2;--bad:#B93838;--bad-soft:#FCE6E6;
+  --shadow:0 1px 2px rgba(30,36,50,.05),0 10px 28px rgba(30,36,50,.07);
+  --shadow-lg:0 2px 4px rgba(30,36,50,.06),0 28px 60px rgba(30,36,50,.16);
+  --glow:rgba(58,73,248,.14);
+  --mark:.05;
   --ease:cubic-bezier(.23,1,.32,1);
   --fs:1;
-  color-scheme:dark;
+  --display:'Outfit','Segoe UI',system-ui,sans-serif;
+  --body:'DM Sans','Segoe UI',system-ui,sans-serif;
 }
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --blue:#5B69FF;--blue-deep:#B4BBFF;--blue-soft:#232A55;--blue-soft-2:#2C3468;
+  --ink:#F1F3FA;--ink-2:#B6BCCD;--ink-3:#868DA3;
+  --bg:#11141C;--surface:#1A1F2D;--surface-2:#161A26;--line:#2B3246;--line-strong:#3B4359;
+  --ok:#5FD3A6;--ok-soft:#173A2F;--warn:#FFC266;--warn-soft:#3A2D14;--bad:#FF8A8A;--bad-soft:#3D1D22;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.28);
+  --shadow-lg:0 2px 4px rgba(0,0,0,.3),0 28px 60px rgba(0,0,0,.45);
+  --glow:rgba(91,105,255,.22);
+  --mark:.06;
+}
+/* cor de cada pessoa (funciona nos dois temas) */
+.hue-1{--hue:#3A49F8;--hue-soft:rgba(58,73,248,.12)}
+.hue-2{--hue:#7C5CFA;--hue-soft:rgba(124,92,250,.13)}
+.hue-3{--hue:#0E9F96;--hue-soft:rgba(14,159,150,.13)}
+.hue-4{--hue:#E08A00;--hue-soft:rgba(224,138,0,.14)}
+.hue-5{--hue:#E0457B;--hue-soft:rgba(224,69,123,.13)}
+:root[data-theme="dark"] .hue-1{--hue:#6E7BFF}
+:root[data-theme="dark"] .hue-2{--hue:#9D85FF}
+:root[data-theme="dark"] .hue-3{--hue:#2CC5B9}
+:root[data-theme="dark"] .hue-4{--hue:#FFB23E}
+:root[data-theme="dark"] .hue-5{--hue:#FF6FA0}
+
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;background:var(--night);color:var(--paper);font-family:"DM Sans",system-ui,sans-serif;overscroll-behavior:none}
-body{min-height:100dvh}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:var(--body);overscroll-behavior:none}
+body{min-height:100dvh;transition:background-color .3s ease,color .3s ease}
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:8px}
 [hidden]{display:none!important}
-.hue-1{--hue:#3A49F8}.hue-2{--hue:#8B5CF6}.hue-3{--hue:#0EA5A0}.hue-4{--hue:#F59E0B}.hue-5{--hue:#EC4899}
+:root:not([data-theme="dark"]) .logo-d{display:none}
+:root[data-theme="dark"] .logo-l{display:none}
 
-/* ---------- HOME ---------- */
-.home{min-height:100dvh;padding:max(28px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(28px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));display:flex;flex-direction:column;align-items:center;position:relative;overflow:hidden}
-.home::before{content:"";position:absolute;inset:-30% -20% auto;height:70%;background:radial-gradient(closest-side,rgba(58,73,248,.35),transparent);pointer-events:none}
-.home__in{width:100%;max-width:720px;position:relative;display:flex;flex-direction:column;gap:22px}
-.home__logo{height:34px;width:auto;align-self:flex-start}
-.home h1{font-family:Outfit,sans-serif;font-size:clamp(30px,6vw,46px);line-height:1.05;letter-spacing:-.02em;margin:6px 0 0}
-.home .sub{color:var(--mist);font-size:16px;margin:0}
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{font-size:13px;font-weight:700;padding:6px 12px;border-radius:999px;background:rgba(169,176,255,.12);color:var(--glow)}
-.label{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--glow);margin:8px 0 -8px}
-.people{display:grid;gap:12px}
-.person{display:flex;align-items:center;gap:16px;text-align:left;width:100%;padding:16px 18px;border-radius:20px;background:var(--night2);border:1px solid var(--line);transition:transform .16s var(--ease),background-color .2s,border-color .2s}
-.person:active{transform:scale(.98)}
-@media (hover:hover) and (pointer:fine){.person:hover{background:var(--night3);border-color:var(--hue)}}
-.person .num{flex:none;width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-family:Outfit;font-weight:700;font-size:24px;background:var(--hue);color:#fff}
-.person .who{flex:1;min-width:0}
-.person .nm{font-family:Outfit;font-size:21px;font-weight:600;display:block}
-.person .ds{font-size:14px;color:var(--mist);display:block;margin-top:2px}
-.person .go{flex:none;color:var(--dim);font-size:22px}
-.person.last{outline:2px solid var(--hue);outline-offset:2px}
-.all{display:flex;align-items:center;justify-content:center;gap:10px;padding:16px;border-radius:18px;border:1.5px dashed rgba(169,176,255,.4);color:var(--glow);font-weight:700}
+/* ---------- interruptor de tema ---------- */
+.theme{display:inline-flex;padding:4px;gap:2px;border-radius:999px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);position:relative}
+.theme button{position:relative;z-index:1;display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;font-size:14px;font-weight:700;color:var(--ink-3);transition:color .2s ease}
+.theme button[aria-pressed="true"]{color:#fff}
+.theme .pill{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 5px);border-radius:999px;background:var(--blue);transition:transform .32s var(--ease)}
+:root[data-theme="dark"] .theme .pill{transform:translateX(calc(100% + 2px))}
+.theme svg{width:16px;height:16px}
+
+/* ---------- PRIMEIRA TELA ---------- */
+.home{min-height:100dvh;padding:max(20px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) max(32px,env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left));display:flex;justify-content:center;position:relative;overflow:hidden}
+.home::before{content:"";position:absolute;left:50%;top:-260px;width:900px;height:620px;transform:translateX(-50%);background:radial-gradient(closest-side,var(--glow),transparent);pointer-events:none}
+.home__in{width:100%;max-width:680px;position:relative;display:flex;flex-direction:column;gap:20px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.top img{height:30px;width:auto;display:block}
+
+.hero{position:relative;overflow:hidden;border-radius:28px;padding:28px 26px 24px;background:linear-gradient(135deg,#3A49F8 0%,#2A36D1 100%);color:#fff;box-shadow:0 20px 50px rgba(58,73,248,.28)}
+.hero .mark{position:absolute;right:-40px;bottom:-50px;width:240px;opacity:.14;pointer-events:none}
+.hero .eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#C9CEFF}
+.hero h1{font-family:var(--display);font-size:clamp(32px,7vw,48px);line-height:1.02;letter-spacing:-.025em;margin:8px 0 10px;max-width:14ch}
+.hero p{margin:0;color:#DDE1FF;font-size:16px;max-width:42ch;line-height:1.45}
+.count{display:flex;align-items:center;gap:14px;margin-top:20px;padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.12);width:fit-content;max-width:100%}
+.count .clock{font-family:var(--display);font-weight:700;font-size:26px;font-variant-numeric:tabular-nums;letter-spacing:-.01em;white-space:nowrap}
+.count .lbl{font-size:13px;line-height:1.3;color:#DDE1FF}
+.count .lbl b{color:#fff;display:block;font-size:14px}
+.count .live{flex:none;width:10px;height:10px;border-radius:5px;background:#7CF0C0;box-shadow:0 0 0 0 rgba(124,240,192,.6);animation:pulse 2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 10px rgba(124,240,192,0)}100%{box-shadow:0 0 0 0 rgba(124,240,192,0)}}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.facts span{font-size:13px;font-weight:700;padding:6px 11px;border-radius:999px;background:rgba(255,255,255,.14);color:#fff}
+
+.sec-title{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:6px 2px -6px}
+.sec-title h2{font-family:var(--display);font-size:20px;margin:0;letter-spacing:-.01em}
+.sec-title span{font-size:13px;color:var(--ink-3)}
+
+.people{display:flex;flex-direction:column;gap:10px;position:relative}
+.person{display:flex;align-items:center;gap:14px;text-align:left;width:100%;padding:14px 16px;border-radius:20px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .18s var(--ease),border-color .2s ease,box-shadow .2s ease}
+.person:active{transform:scale(.985)}
+@media (hover:hover) and (pointer:fine){.person:hover{border-color:var(--hue);box-shadow:var(--shadow-lg)}.person:hover .go{transform:translateX(3px);color:var(--hue)}}
+.person .num{flex:none;width:50px;height:50px;border-radius:15px;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:22px;background:var(--hue);color:#fff;box-shadow:0 6px 16px var(--hue-soft)}
+.person .who{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.person .nm{font-family:var(--display);font-size:20px;font-weight:600;letter-spacing:-.01em;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.person .badge{font-family:var(--body);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:6px;background:var(--hue-soft);color:var(--hue)}
+.person .ds{font-size:14px;color:var(--ink-2);display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.person .ds i{font-style:normal;color:var(--ink-3)}
+.person .go{flex:none;color:var(--ink-3);transition:transform .2s var(--ease),color .2s ease}
+.person .go svg{width:22px;height:22px;display:block}
+
+.all{display:flex;align-items:center;justify-content:center;gap:10px;padding:16px;border-radius:18px;background:var(--blue-soft);color:var(--blue-deep);font-weight:700;font-size:16px;transition:transform .18s var(--ease),background-color .2s ease}
+.all:active{transform:scale(.985)}
+@media (hover:hover) and (pointer:fine){.all:hover{background:var(--blue-soft-2)}}
+.all svg{width:18px;height:18px}
+
 .howto{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.howto div{background:rgba(255,255,255,.04);border-radius:14px;padding:12px;font-size:13px;color:var(--mist);line-height:1.35}
-.howto b{display:block;color:var(--paper);font-size:14px;margin-bottom:2px}
-@media (max-width:520px){.howto{grid-template-columns:1fr}}
+.howto div{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;font-size:13px;color:var(--ink-2);line-height:1.4}
+.howto b{display:flex;align-items:center;gap:6px;color:var(--ink);font-size:14px;margin-bottom:4px}
+.howto svg{width:16px;height:16px;color:var(--blue)}
+.foot{font-size:12px;color:var(--ink-3);text-align:center;margin:4px 0 0}
+@media (max-width:540px){.howto{grid-template-columns:1fr}.hero{padding:24px 20px 20px}.count .clock{font-size:22px}}
 
-/* ---------- STAGE ---------- */
-.stage{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--night);user-select:none;-webkit-user-select:none;touch-action:manipulation}
-.bar{position:relative;z-index:3;display:flex;align-items:center;gap:10px;padding:max(10px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) 10px max(14px,env(safe-area-inset-left))}
-.icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.06);font-size:18px;flex:none}
-.icon[aria-pressed="true"]{background:var(--blue);color:#fff}
+/* entrada da primeira tela */
+.rise{animation:rise .6s var(--ease) both}
+.rise:nth-child(2){animation-delay:.05s}.rise:nth-child(3){animation-delay:.1s}.rise:nth-child(4){animation-delay:.15s}.rise:nth-child(5){animation-delay:.2s}.rise:nth-child(6){animation-delay:.25s}.rise:nth-child(7){animation-delay:.3s}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+
+/* ---------- PALCO ---------- */
+.stage{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--bg);user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.bar{position:relative;z-index:3;display:flex;align-items:center;gap:8px;padding:max(10px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 10px max(12px,env(safe-area-inset-left));background:var(--surface);border-bottom:1px solid var(--line)}
+.icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);font-size:15px;font-weight:700;flex:none;color:var(--ink-2);transition:background-color .2s ease,color .2s ease}
+.icon svg{width:18px;height:18px}
+.icon[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff}
+@media (hover:hover) and (pointer:fine){.icon:hover{color:var(--ink)}.icon[aria-pressed="true"]:hover{color:#fff}}
 .bar .me{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
-.bar .dot{width:12px;height:12px;border-radius:6px;background:var(--hue);flex:none}
-.bar .me b{font-family:Outfit;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.timer{font-family:Outfit;font-weight:700;font-variant-numeric:tabular-nums;font-size:18px;padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.06);white-space:nowrap}
-.timer small{color:var(--dim);font-weight:500;font-size:13px}
-.timer.warn{background:rgba(255,181,71,.18);color:var(--warn)}
-.timer.over{background:rgba(255,92,108,.2);color:var(--bad)}
-.progress{height:4px;background:rgba(255,255,255,.08);position:relative;z-index:3}
-.progress i{position:absolute;inset:0 auto 0 0;background:var(--hue);transform-origin:left;transition:transform .3s var(--ease);width:100%}
+.bar .av{width:34px;height:34px;border-radius:10px;background:var(--hue);color:#fff;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:16px;flex:none}
+.bar .me b{font-family:var(--display);font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.timer{font-family:var(--display);font-weight:700;font-variant-numeric:tabular-nums;font-size:18px;padding:8px 12px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);white-space:nowrap;transition:background-color .3s ease,color .3s ease}
+.timer small{color:var(--ink-3);font-weight:500;font-size:13px}
+.timer.warn{background:var(--warn-soft);border-color:transparent;color:var(--warn)}
+.timer.warn small{color:var(--warn)}
+.timer.over{background:var(--bad-soft);border-color:transparent;color:var(--bad)}
+.timer.over small{color:var(--bad)}
+.tools{display:flex;gap:6px}
+.progress{height:4px;background:var(--line);position:relative;z-index:3}
+.progress i{position:absolute;inset:0 auto 0 0;width:100%;background:var(--hue);transform-origin:left;transition:transform .35s var(--ease)}
 .view{flex:1;position:relative;overflow:hidden;cursor:pointer}
-.card{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:clamp(14px,2.6vh,26px);padding:clamp(16px,4vw,64px) max(clamp(20px,6vw,96px),env(safe-area-inset-right)) clamp(16px,4vw,48px) max(clamp(20px,6vw,96px),env(safe-area-inset-left))}
-.card.enter{animation:cardIn .32s var(--ease) both}
+.view .wm{position:absolute;right:-60px;bottom:30px;width:min(46vw,420px);opacity:var(--mark);pointer-events:none}
+.card{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;justify-content:center;gap:clamp(14px,2.6vh,26px);padding:clamp(28px,5vh,64px) max(clamp(22px,7vw,110px),env(safe-area-inset-right)) clamp(64px,10vh,96px) max(clamp(22px,7vw,110px),env(safe-area-inset-left))}
+.card.enter{animation:cardIn .34s var(--ease) both}
 .card.enter.back{animation-name:cardBack}
-@keyframes cardIn{from{opacity:0;transform:translateX(36px)}}
-@keyframes cardBack{from{opacity:0;transform:translateX(-36px)}}
-@media (prefers-reduced-motion:reduce){.card.enter{animation:fadeIn .2s ease both}@keyframes fadeIn{from{opacity:0}}}
+@keyframes cardIn{from{opacity:0;transform:translateX(40px)}}
+@keyframes cardBack{from{opacity:0;transform:translateX(-40px)}}
+@media (prefers-reduced-motion:reduce){.card.enter,.rise{animation:fadeIn .2s ease both}@keyframes fadeIn{from{opacity:0}}.count .live{animation:none}}
 .meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
-.tag{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.07);color:var(--mist)}
-.tag.slide{background:var(--hue);color:#fff}
-.switch{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:16px;background:rgba(58,73,248,.16);border:1.5px solid rgba(169,176,255,.45);color:var(--paper);font-weight:700;font-size:calc(17px*var(--fs))}
-.switch .arr{font-size:22px}
-.switch small{display:block;font-weight:500;color:var(--mist);font-size:calc(14px*var(--fs));margin-top:2px}
-.en{font-family:Outfit,sans-serif;font-weight:600;letter-spacing:-.015em;line-height:1.12;font-size:calc(clamp(30px,5.4vw,68px)*var(--fs));margin:0;text-wrap:balance}
-.pt{font-size:calc(clamp(17px,2.1vw,26px)*var(--fs));color:var(--mist);font-style:italic;margin:0;line-height:1.35}
-.tip{font-size:calc(15px*var(--fs));color:var(--warn);font-weight:600;display:flex;gap:8px;align-items:flex-start}
-.next{position:absolute;left:0;right:0;bottom:0;padding:14px max(clamp(20px,6vw,96px),env(safe-area-inset-left)) max(16px,env(safe-area-inset-bottom));color:var(--dim);font-size:15px;border-top:1px solid var(--line);background:linear-gradient(transparent,rgba(0,0,0,.25));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.next b{color:var(--mist);font-weight:700}
-.count{position:absolute;right:max(16px,env(safe-area-inset-right));top:12px;font-size:13px;color:var(--dim);font-variant-numeric:tabular-nums}
-.hint{position:absolute;left:50%;top:14px;transform:translateX(-50%);font-size:13px;color:var(--dim);white-space:nowrap}
-/* special cards */
-.big{font-family:Outfit;font-weight:700;letter-spacing:-.02em;line-height:1.02;font-size:calc(clamp(40px,8vw,96px)*var(--fs));margin:0}
+.tag{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:6px 10px;border-radius:8px;background:var(--surface);border:1px solid var(--line);color:var(--ink-2)}
+.tag.slide{background:var(--hue);border-color:var(--hue);color:#fff}
+.switch{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:18px;background:var(--hue-soft);border:1.5px solid var(--hue);color:var(--ink);font-weight:700;font-size:calc(17px*var(--fs));max-width:820px}
+.switch .arr{flex:none;width:36px;height:36px;border-radius:10px;background:var(--hue);color:#fff;display:grid;place-items:center}
+.switch .arr svg{width:20px;height:20px}
+.switch small{display:block;font-weight:500;color:var(--ink-2);font-size:calc(14px*var(--fs));margin-top:2px}
+.en{font-family:var(--display);font-weight:600;letter-spacing:-.02em;line-height:1.1;font-size:calc(clamp(32px,5.6vw,72px)*var(--fs));margin:0;text-wrap:balance;color:var(--ink)}
+.pt{font-size:calc(clamp(17px,2.1vw,26px)*var(--fs));color:var(--ink-2);font-style:italic;margin:0;line-height:1.4}
+.tip{font-size:calc(15px*var(--fs));color:var(--warn);background:var(--warn-soft);font-weight:600;display:inline-flex;gap:8px;align-items:flex-start;padding:9px 12px;border-radius:12px;align-self:flex-start}
+.next{position:absolute;z-index:1;left:0;right:0;bottom:0;padding:14px max(clamp(22px,7vw,110px),env(safe-area-inset-left)) max(16px,env(safe-area-inset-bottom));color:var(--ink-3);font-size:15px;border-top:1px solid var(--line);background:var(--surface-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.next b{color:var(--ink-2);font-weight:700}
+.counter{position:absolute;z-index:1;right:max(16px,env(safe-area-inset-right));top:14px;font-size:13px;font-weight:700;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.hint{position:absolute;z-index:1;left:50%;top:12px;transform:translateX(-50%);font-size:13px;font-weight:600;color:var(--blue);background:var(--blue-soft);padding:6px 12px;border-radius:999px;white-space:nowrap}
+.big{font-family:var(--display);font-weight:700;letter-spacing:-.025em;line-height:1.02;font-size:calc(clamp(42px,8vw,100px)*var(--fs));margin:0}
 .big .h{color:var(--hue)}
-.say{display:inline-block;font-family:Outfit;font-weight:600;font-size:calc(clamp(24px,3.6vw,40px)*var(--fs));padding:12px 20px;border-radius:16px;background:var(--hue);color:#fff;align-self:flex-start}
-.done{color:var(--ok);font-weight:700;font-size:18px}
-.wait{color:var(--mist);font-size:calc(18px*var(--fs));line-height:1.45;max-width:46ch}
-.wait b{color:var(--paper)}
+.say{display:inline-block;font-family:var(--display);font-weight:600;font-size:calc(clamp(24px,3.6vw,40px)*var(--fs));padding:12px 22px;border-radius:18px;background:var(--hue);color:#fff;align-self:flex-start;box-shadow:0 10px 24px var(--hue-soft)}
+.done{color:var(--ok);background:var(--ok-soft);font-weight:700;font-size:16px;padding:7px 12px;border-radius:10px;align-self:flex-start;margin:0}
+.wait{color:var(--ink-2);font-size:calc(18px*var(--fs));line-height:1.5;max-width:48ch;margin:0}
+.wait b{color:var(--ink)}
 .zone{position:absolute;top:0;bottom:0;left:0;width:28%;z-index:2}
-.card{z-index:1}
-.flash{position:absolute;inset:0;pointer-events:none;background:var(--hue);opacity:0}
+.flash{position:absolute;inset:0;z-index:2;pointer-events:none;background:var(--hue);opacity:0}
 .flash.on{animation:fl .5s ease-out}
-@keyframes fl{0%{opacity:.18}100%{opacity:0}}
+@keyframes fl{0%{opacity:.14}100%{opacity:0}}
 
-/* sheet */
-.sheet{position:fixed;inset:0;z-index:10;background:rgba(10,12,20,.6);display:flex;align-items:flex-end;justify-content:center}
-.sheet__in{width:100%;max-width:760px;max-height:88dvh;overflow:auto;background:var(--night2);border-radius:24px 24px 0 0;padding:20px max(20px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));animation:up .28s var(--ease) both}
+/* ---------- perguntas ---------- */
+.sheet{position:fixed;inset:0;z-index:10;background:rgba(17,20,28,.45);display:flex;align-items:flex-end;justify-content:center}
+.sheet__in{width:100%;max-width:760px;max-height:88dvh;overflow:auto;background:var(--surface);border-radius:28px 28px 0 0;padding:22px max(20px,env(safe-area-inset-right)) max(26px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));animation:up .3s var(--ease) both;box-shadow:var(--shadow-lg)}
 @keyframes up{from{transform:translateY(40px);opacity:0}}
-.sheet h2{font-family:Outfit;font-size:24px;margin:0 0 4px}
-.sheet h3{font-family:Outfit;font-size:17px;margin:20px 0 8px;color:var(--glow)}
-.sheet .row{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.04);margin-bottom:8px}
-.sheet .q{font-size:14px;color:var(--mist)}
-.sheet .q b{color:var(--paper)}
-.sheet .a{font-family:Outfit;font-size:20px;font-weight:600;margin:6px 0 2px}
-.sheet .p{font-size:14px;color:var(--dim);font-style:italic}
+.sheet h2{font-family:var(--display);font-size:26px;margin:0 0 4px;letter-spacing:-.01em}
+.sheet h3{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin:22px 0 10px;color:var(--blue)}
+.sheet .row{padding:14px 16px;border-radius:16px;background:var(--surface-2);border:1px solid var(--line);margin-bottom:8px}
+.sheet .q{font-size:14px;color:var(--ink-2);margin:0}
+.sheet .q b{color:var(--ink)}
+.sheet .a{font-family:var(--display);font-size:21px;font-weight:600;margin:6px 0 2px;letter-spacing:-.01em}
+.sheet .p{font-size:14px;color:var(--ink-3);font-style:italic}
 .sheet .close{float:right}
-.sheet .who{font-size:12px;font-weight:700;color:var(--glow);text-transform:uppercase;letter-spacing:.08em}
-.tools{display:flex;gap:8px}
-@media (max-width:560px){.bar .me b{font-size:15px}.timer{font-size:16px;padding:8px 10px}.icon{width:38px;height:38px}.hide-sm{display:none}}
+.sheet .who{font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.1em}
+@media (max-width:600px){.bar .me b{font-size:16px}.timer{font-size:16px;padding:7px 9px}.icon{width:38px;height:38px}.hide-sm{display:none}.bar .av{width:30px;height:30px;font-size:14px}}
 </style>
 </head>
 <body>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5z"/></symbol>
+  <symbol id="i-tap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5a2 2 0 0 1 4 0v6M13 10a2 2 0 0 1 4 0v3a7 7 0 0 1-7 7h-.5A5.5 5.5 0 0 1 4 14.5V13a2 2 0 0 1 4 0"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+</svg>
+
 <main id="home" class="home" hidden>
   <div class="home__in">
-    <img class="home__logo" src="assets/logo-full-white.png" alt="VAGGO" width="533" height="130">
-    <div>
-      <h1>Falas do pitch</h1>
-      <p class="sub">Escolha seu nome. Suas falas aparecem uma de cada vez, em inglês, com a tradução embaixo.</p>
+    <div class="top rise">
+      <span><img class="logo-l" src="assets/logo-full.png" alt="VAGGO" width="533" height="130"><img class="logo-d" src="assets/logo-full-white.png" alt="VAGGO" width="533" height="130"></span>
+      <div class="theme" role="group" aria-label="Tema">
+        <span class="pill"></span>
+        <button data-theme-set="light" aria-pressed="false"><svg><use href="#i-sun"/></svg>Claro</button>
+        <button data-theme-set="dark" aria-pressed="false"><svg><use href="#i-moon"/></svg>Escuro</button>
+      </div>
     </div>
-    <div class="chips"><span class="chip">Qui · 26/11</span><span class="chip">Máx. 5 min</span><span class="chip">Tudo em inglês</span><span class="chip">10 slides</span></div>
-    <p class="label">Quem é você?</p>
-    <div class="people" id="people"></div>
-    <button class="all" data-go="all">▶ Ensaio geral: todas as falas, em ordem</button>
-    <div class="howto">
-      <div><b>Toque na tela</b>ou aperte espaço / seta → para a próxima fala</div>
-      <div><b>Errou?</b>Toque no lado esquerdo ou seta ← para voltar</div>
-      <div><b>Cronômetro</b>Começa no 1º toque e mostra seu tempo-alvo</div>
+
+    <section class="hero rise">
+      <img class="mark" src="assets/logo-symbol-white.png" alt="">
+      <span class="eyebrow">Pitch · Professional English</span>
+      <h1>Your dream starts here.</h1>
+      <p>Escolha seu nome e suas falas aparecem uma de cada vez: inglês em destaque, tradução embaixo.</p>
+      <div class="count"><span class="live"></span><span class="clock" id="clock">--</span><span class="lbl" id="clockLbl"></span></div>
+      <div class="facts"><span>Hoje · 19h20</span><span>Máx. 5 min</span><span>Tudo em inglês</span><span>10 slides</span></div>
+    </section>
+
+    <div class="sec-title rise"><h2>Quem vai falar?</h2><span>na ordem da apresentação</span></div>
+    <div class="people rise" id="people"></div>
+
+    <button class="all rise" data-go="all"><svg><use href="#i-play"/></svg>Ensaio geral: todas as falas em ordem</button>
+
+    <div class="howto rise">
+      <div><b><svg><use href="#i-tap"/></svg>Avançar</b>Toque na tela, espaço, seta → ou o passador de slides</div>
+      <div><b><svg><use href="#i-undo"/></svg>Voltar</b>Toque no lado esquerdo da tela ou seta ←</div>
+      <div><b><svg><use href="#i-clock"/></svg>Cronômetro</b>Começa no 1º toque e avisa quando o tempo acabar</div>
     </div>
+    <p class="foot">VAGGO · Engenharia de Software · UniAnchieta · Turma A</p>
   </div>
 </main>
 
 <section id="stage" class="stage" hidden>
   <div class="bar">
-    <button class="icon" id="btnHome" aria-label="Voltar para a lista de nomes">←</button>
-    <div class="me"><span class="dot"></span><b id="meName"></b></div>
+    <button class="icon" id="btnHome" aria-label="Voltar para a lista de nomes"><svg><use href="#i-back"/></svg></button>
+    <div class="me"><span class="av" id="meAv"></span><b id="meName"></b></div>
     <div class="timer" id="timer">0:00 <small></small></div>
     <div class="tools">
       <button class="icon" id="btnPt" aria-label="Mostrar ou esconder a tradução" aria-pressed="true">PT</button>
       <button class="icon hide-sm" id="btnSmaller" aria-label="Diminuir letra">A−</button>
       <button class="icon" id="btnBigger" aria-label="Aumentar letra">A+</button>
+      <button class="icon hide-sm" id="btnTheme" aria-label="Trocar tema claro ou escuro"><svg><use href="#i-moon"/></svg></button>
       <button class="icon" id="btnQa" aria-label="Perguntas e frases de socorro">?</button>
     </div>
   </div>
   <div class="progress"><i id="prog"></i></div>
   <div class="view" id="view">
+    <img class="wm logo-l" src="assets/logo-symbol.png" alt="">
+    <img class="wm logo-d" src="assets/logo-symbol-white.png" alt="">
     <div class="zone" id="zoneBack" aria-hidden="true"></div>
     <div class="flash" id="flash"></div>
   </div>
@@ -159,6 +272,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 
 <script>
 const DATA = {"people": [{"id": "leonardo", "name": "Leonardo Gabriel", "first": "Leonardo", "order": 1, "time": "0:00 – 0:55", "role": "Você abre a apresentação: cumprimenta, faz a pergunta que prende a atenção e mostra o problema.", "receives": null, "next": "Arthur", "slides": [{"n": 1, "title": "Capa", "stage": "Introduction (abertura)", "action": "Sorria e olhe para a turma. Passe o slide depois de dizer \"VAGGO\".", "lines": [["Good evening, everyone. Thank you for being here tonight.", "Boa noite a todos. Obrigado por estarem aqui hoje à noite."], ["We are Leonardo, Arthur, César, Gabriel and Cauã.", "Somos Leonardo, Arthur, César, Gabriel e Cauã."], ["Our project is called VAGGO.", "Nosso projeto se chama VAGGO."]]}, {"n": 2, "title": "Gancho (o número)", "stage": "Hook (gancho)", "action": "Faça uma pausa de 1 segundo depois da pergunta. Aponte para o \"5.6 million\".", "lines": [["First, a question.", "Primeiro, uma pergunta."], ["Do you need a nanny, a cleaner or a caregiver?", "Você precisa de uma babá, uma diarista ou um cuidador?"], ["Who can you trust?", "Em quem você pode confiar?"], ["In Brazil, five point six million people work in homes.", "No Brasil, 5,6 milhões de pessoas trabalham em casas."], ["Ninety-two percent are women.", "92% são mulheres."], ["And three in four have no formal contract.", "E 3 em cada 4 não têm carteira assinada."]]}, {"n": 3, "title": "O problema", "stage": "The problem (o problema)", "action": "Aponte para o lado esquerdo e depois para o direito. Olhe para o Arthur ao passar a palavra.", "lines": [["We identified an important problem, on two sides.", "Identificamos um problema importante, dos dois lados."], ["Workers find jobs only with friends and WhatsApp.", "Os trabalhadores só acham emprego com amigos e WhatsApp."], ["And families don't know who to trust.", "E as famílias não sabem em quem confiar."], ["Arthur, please.", "Arthur, por favor."]]}], "questions": [["Does it work on phones?", "Funciona no celular?", "Yes. It works on computers and phones.", "Sim. Funciona no computador e no celular."]]}, {"id": "arthur", "name": "Arthur Cortez", "first": "Arthur", "order": 2, "time": "0:55 – 1:50", "role": "Você apresenta a solução: o que é o VAGGO, o slogan e como funciona em 3 passos.", "receives": "Leonardo", "next": "César", "slides": [{"n": 4, "title": "A solução", "stage": "Value proposition (a solução)", "action": "Mostre o print do site com a mão.", "lines": [["Thank you, Leonardo.", "Obrigado, Leonardo."], ["Our solution is VAGGO.", "Nossa solução é o VAGGO."], ["Our platform connects workers with families and companies.", "Nossa plataforma conecta trabalhadores a famílias e empresas."], ["Our slogan is: Your dream starts here.", "Nosso slogan é: Seu sonho começa aqui."], ["Look at our logo: the A has a little door. It means home.", "Olhem o logo: o A tem uma portinha. Significa lar."]]}, {"n": 5, "title": "Como funciona", "stage": "The solution (como funciona)", "action": "Conte nos dedos: um, dois, três.", "lines": [["It is very simple.", "É muito simples."], ["Step one: create your profile.", "Passo um: crie seu perfil."], ["Step two: find a job or a worker.", "Passo dois: encontre uma vaga ou um profissional."], ["Step three: connect and start to work.", "Passo três: conecte-se e comece a trabalhar."], ["César, please.", "César, por favor."]]}], "questions": [["Is it only for home services?", "É só para serviços domésticos?", "No. We started with home services. In the future, more jobs.", "Não. Começamos com serviços domésticos. No futuro, mais profissões."], ["How do you know a worker is good?", "Como saber se o profissional é bom?", "Today, with the profile. In the future, with reviews.", "Hoje, pelo perfil. No futuro, com avaliações."]]}, {"id": "cesar", "name": "César Zotovici", "first": "César", "order": 3, "time": "1:50 – 2:45", "role": "Você mostra a inovação (a nota de compatibilidade) e os benefícios para os dois públicos.", "receives": "Arthur", "next": "Gabriel", "slides": [{"n": 6, "title": "A inovação: Match Score", "stage": "Innovation (a inovação)", "action": "Aponte para cada barra quando falar 50, 30 e 20.", "lines": [["Thank you, Arthur.", "Obrigado, Arthur."], ["What is new in VAGGO? It is three in one: jobs, a professional network and services.", "O que o VAGGO tem de novo? É três em um: vagas, rede profissional e serviços."], ["And it has the Match Score.", "E tem a nota de compatibilidade."], ["VAGGO gives a score from zero to one hundred.", "O VAGGO dá uma nota de 0 a 100."], ["Fifty points for the service.", "50 pontos pelo serviço."], ["Thirty points for the city.", "30 pontos pela cidade."], ["Twenty points for the contract.", "20 pontos pelo contrato."], ["And it shows why.", "E ele mostra o porquê."]]}, {"n": 7, "title": "Os dois painéis", "stage": "The benefit (benefícios)", "action": "Aponte para o print da esquerda e depois para o da direita.", "lines": [["Each user has a different page.", "Cada usuário tem uma página diferente."], ["Workers see their applications.", "Os trabalhadores veem suas candidaturas."], ["Employers post jobs.", "Os contratantes publicam vagas."], ["And it works in Portuguese and English, on the computer and on the phone.", "E funciona em português e inglês, no computador e no celular."], ["Gabriel, please.", "Gabriel, por favor."]]}], "questions": [["How is VAGGO different?", "Qual a diferença do VAGGO?", "VAGGO has the Match Score. It shows why a job is good for you.", "O VAGGO tem a nota de compatibilidade. Mostra por que a vaga é boa para você."], ["How does the Match Score work?", "Como funciona a nota?", "Service, city and contract. Fifty, thirty and twenty points.", "Serviço, cidade e contrato. 50, 30 e 20 pontos."]]}, {"id": "gabriel", "name": "Gabriel Angioleto", "first": "Gabriel", "order": 4, "time": "2:45 – 3:45", "role": "Você explica a tecnologia e os 4 pilares de POO. É a parte \"Explain your technology\" que a professora pede.", "receives": "César", "next": "Cauã", "slides": [{"n": 8, "title": "A tecnologia", "stage": "Explain your technology", "action": "Aponte para cada um dos 4 cartões, na ordem. Fale devagar nos nomes dos pilares.", "lines": [["Thank you, César.", "Obrigado, César."], ["We made VAGGO with HTML, CSS and JavaScript.", "Fizemos o VAGGO com HTML, CSS e JavaScript."], ["We used object-oriented programming, like in Java.", "Usamos programação orientada a objetos, como em Java."], ["We used the four pillars.", "Usamos os quatro pilares."], ["One: encapsulation. The password is private.", "Um: encapsulamento. A senha é privada."], ["Two: inheritance. Professional and Employer come from User.", "Dois: herança. Professional e Employer vêm de User."], ["Three: abstraction. User is an abstract class.", "Três: abstração. User é uma classe abstrata."], ["Four: polymorphism. The same method gives different answers for different users.", "Quatro: polimorfismo. O mesmo método dá respostas diferentes para usuários diferentes."], ["The site is online now: vaggoprototipo dot vercel dot app.", "O site está no ar: vaggoprototipo.vercel.app."], ["Cauã, please.", "Cauã, por favor."]]}], "questions": [["Where is the data saved?", "Onde os dados ficam salvos?", "In the browser. It is a prototype.", "No navegador. É um protótipo."], ["Why JavaScript and not Java?", "Por que JavaScript e não Java?", "JavaScript is for the web. But we used the same ideas from Java.", "JavaScript é para a web. Mas usamos as mesmas ideias do Java."], ["Can you show polymorphism?", "Pode mostrar o polimorfismo?", "Yes. canApply is true for a Professional and false for an Employer.", "Sim. canApply é verdadeiro para Professional e falso para Employer."]]}, {"id": "caua", "name": "Cauã Olaia", "first": "Cauã", "order": 5, "time": "3:45 – 4:45", "role": "Você fecha: por que escolher o VAGGO, o futuro do projeto e a pergunta final para a professora.", "receives": "Gabriel", "next": null, "slides": [{"n": 9, "title": "Por que VAGGO e o futuro", "stage": "Selling your product (persuasão)", "action": "Fale \"saves time, reliable, easy to use\" devagar, com pausa entre cada um.", "lines": [["Thank you, Gabriel.", "Obrigado, Gabriel."], ["Why should you choose VAGGO? It saves time. It is reliable. It is easy to use.", "Por que escolher o VAGGO? Economiza tempo. É confiável. É fácil de usar."], ["In the future, we will add reviews, chat and notifications.", "No futuro, vamos adicionar avaliações, chat e notificações."], ["And more types of jobs.", "E mais tipos de trabalho."], ["We will offer subscription plans with extra features.", "Vamos oferecer planos de assinatura com recursos extras."]]}, {"n": 10, "title": "Encerramento", "stage": "The Ask + Closing (o pedido final)", "action": "Os cinco dão um passo à frente. Depois da pergunta final, sorria e espere em silêncio.", "lines": [["We believe in the potential of our project.", "Acreditamos no potencial do nosso projeto."], ["Could we schedule a meeting to discuss our solution?", "Podemos marcar uma reunião para discutir nossa solução?"], ["Thank you for your attention.", "Obrigado pela atenção."], ["Are there any questions?", "Há alguma pergunta?"]]}], "questions": [["How will VAGGO make money?", "Como o VAGGO vai ganhar dinheiro?", "With subscription plans with extra features.", "Com planos de assinatura com recursos extras."]]}], "help": [["Sorry, can you repeat, please?", "Desculpe, pode repetir, por favor?"], ["Good question.", "Boa pergunta."], ["Can my friend answer?", "Meu colega pode responder?"], ["That is in our future plans.", "Isso está nos nossos planos futuros."]]};
+const SHOW = new Date('2026-11-26T19:20:00-03:00');
 
 const $ = (s) => document.querySelector(s);
 const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -168,20 +282,50 @@ const store = {
 };
 const secs = (t) => { const [m, s] = t.split(':').map(Number); return m * 60 + s; };
 const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
-const byFirst = Object.fromEntries(DATA.people.map((p) => [p.first, p]));
+const svg = (id) => `<svg><use href="#${id}"/></svg>`;
 
-/* Monta a sequência de cartões de uma pessoa (ou de todos). */
+/* ---------- tema ---------- */
+function setTheme(t) {
+  document.documentElement.dataset.theme = t;
+  store.set('theme', t);
+  document.querySelectorAll('[data-theme-set]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.themeSet === t));
+  $('#btnTheme').innerHTML = svg(t === 'dark' ? 'i-sun' : 'i-moon');
+  document.querySelector('meta[name="theme-color"]').content = t === 'dark' ? '#1A1F2D' : '#F5F6FA';
+}
+function toggleTheme() {
+  const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.startViewTransition(() => setTheme(next));
+  else setTheme(next);
+}
+
+/* ---------- contagem até 19h20 ---------- */
+function drawClock() {
+  const ms = SHOW - Date.now();
+  const clock = $('#clock'), lbl = $('#clockLbl');
+  if (ms > 0) {
+    const m = Math.ceil(ms / 60000), h = Math.floor(m / 60), mm = m % 60;
+    clock.textContent = h ? `${h}h ${String(mm).padStart(2, '0')}min` : `${mm} min`;
+    lbl.innerHTML = '<b>para a apresentação</b>Hoje, quinta 26/11, às 19h20';
+  } else if (ms > -90 * 60000) {
+    clock.textContent = 'É agora!';
+    lbl.innerHTML = '<b>Respira e fala devagar</b>Vocês ensaiaram. Boa apresentação!';
+  } else {
+    clock.textContent = 'Feito ✓';
+    lbl.innerHTML = '<b>Apresentação concluída</b>Use o ensaio geral para treinar quando quiser';
+  }
+}
+
+/* ---------- cartões ---------- */
 function buildCards(people, ensemble) {
   const cards = [];
   people.forEach((p, pi) => {
     if (ensemble) cards.push({ kind: 'turn', p });
     p.slides.forEach((s, si) => {
       s.lines.forEach((l, li) => {
-        const isHandoffLine = p.next && li === s.lines.length - 1 && si === p.slides.length - 1;
         cards.push({
           kind: 'line', p, s, en: l[0], pt: l[1],
           first: li === 0, firstOfPerson: si === 0 && li === 0,
-          handoff: isHandoffLine,
+          handoff: p.next && li === s.lines.length - 1 && si === p.slides.length - 1,
         });
       });
     });
@@ -195,29 +339,30 @@ let pt = store.get('pt', true);
 let fs = store.get('fs', 1);
 document.documentElement.style.setProperty('--fs', fs);
 
-/* ---------- HOME ---------- */
 function renderHome() {
   const last = store.get('last', null);
   $('#people').innerHTML = DATA.people.map((p) => `
-    <button class="person hue-${p.order}${last === p.id ? ' last' : ''}" data-go="${p.id}">
+    <button class="person hue-${p.order}" data-go="${p.id}">
       <span class="num">${p.order}</span>
-      <span class="who"><span class="nm">${esc(p.name)}</span>
-      <span class="ds">Slides ${p.slides.map((s) => s.n).join(', ')} · ${esc(p.time)}${last === p.id ? ' · último acesso' : ''}</span></span>
-      <span class="go">→</span>
+      <span class="who">
+        <span class="nm">${esc(p.name)}${last === p.id ? '<span class="badge">você</span>' : ''}</span>
+        <span class="ds">Slides ${p.slides.map((s) => s.n).join(', ')} <i>·</i> ${esc(p.time)}</span>
+      </span>
+      <span class="go">${svg('i-arrow')}</span>
     </button>`).join('');
 }
 
-/* ---------- STAGE ---------- */
 function open(key) {
   const ensemble = key === 'all';
   const people = ensemble ? DATA.people : DATA.people.filter((p) => p.id === key);
   if (!people.length) { location.hash = ''; return; }
   const p = people[0];
-  state = { ...state, key, people, ensemble, cards: buildCards(people, ensemble), i: 0, start: null,
-    target: ensemble ? 300 : secs(p.time.split('–')[1].trim()) - secs(p.time.split('–')[0].trim()) };
+  const [a, b] = p.time.split('–').map((x) => secs(x.trim()));
+  state = { ...state, key, people, ensemble, cards: buildCards(people, ensemble), i: 0, start: null, target: ensemble ? 300 : b - a };
   if (!ensemble) store.set('last', key);
   $('#stage').className = `stage hue-${ensemble ? 1 : p.order}`;
-  $('#meName').textContent = ensemble ? 'Ensaio geral' : `${p.order}. ${p.first}`;
+  $('#meAv').textContent = ensemble ? '★' : p.order;
+  $('#meName').textContent = ensemble ? 'Ensaio geral' : p.first;
   $('#home').hidden = true; $('#stage').hidden = false;
   clearInterval(state.tick); state.tick = setInterval(drawTimer, 250);
   drawTimer(); render(0); keepAwake();
@@ -226,45 +371,47 @@ function open(key) {
 function render(dir) {
   const c = state.cards[state.i];
   const view = $('#view');
-  view.querySelectorAll('.card,.next,.count,.hint').forEach((n) => n.remove());
-  const hueCls = `hue-${c.p.order}`;
+  view.querySelectorAll('.card,.next,.counter,.hint').forEach((n) => n.remove());
+  const hue = `hue-${c.p.order}`;
   let html = '';
   if (c.kind === 'line') {
     const changeSlide = c.first && !(c.firstOfPerson && c.p.slides[0].n === 1);
-    html = `<div class="card ${hueCls}">
+    html = `<div class="card ${hue}">
       <div class="meta"><span class="tag slide">Slide ${c.s.n}</span><span class="tag">${esc(c.s.title)}</span>${state.ensemble ? `<span class="tag">${esc(c.p.first)}</span>` : ''}</div>
-      ${changeSlide ? `<div class="switch"><span class="arr">➜</span><span>${c.firstOfPerson ? `Sua vez! Slide ${c.s.n} na tela` : `Passe para o slide ${c.s.n}`}<small>${esc(c.s.action)}</small></span></div>` : (c.first ? `<div class="tip">💡 ${esc(c.s.action)}</div>` : '')}
+      ${changeSlide
+        ? `<div class="switch"><span class="arr">${svg('i-arrow')}</span><span>${c.firstOfPerson ? `Sua vez! Slide ${c.s.n} na tela` : `Passe para o slide ${c.s.n}`}<small>${esc(c.s.action)}</small></span></div>`
+        : (c.first ? `<div class="tip">💡 ${esc(c.s.action)}</div>` : '')}
       <p class="en">${esc(c.en)}</p>
       ${pt ? `<p class="pt">${esc(c.pt)}</p>` : ''}
       ${c.handoff ? `<div class="tip">👉 Olhe para ${esc(c.p.next)} ao dizer o nome</div>` : ''}
     </div>`;
   } else if (c.kind === 'turn') {
-    html = `<div class="card ${hueCls}">
+    html = `<div class="card ${hue}">
       <div class="meta"><span class="tag slide">${c.p.order}º a falar</span><span class="tag">${esc(c.p.time)}</span></div>
       <p class="big">Agora: <span class="h">${esc(c.p.first)}</span></p>
       <p class="wait">${esc(c.p.role)}${c.p.receives ? `<br>Começa quando <b>${esc(c.p.receives)}</b> disser <b>"${esc(c.p.first)}, please"</b>.` : ''}</p>
     </div>`;
   } else {
     const e = c.ensemble;
-    html = `<div class="card ${hueCls}">
+    html = `<div class="card ${hue}">
       <p class="done">✓ ${e ? 'Fim da apresentação' : 'Fim da sua parte'} · ${fmt(elapsed())}</p>
-      ${!e && c.p.next ? `<p class="big">Passe para <span class="h">${esc(c.p.next)}</span></p><span class="say">"${esc(c.p.next)}, please."</span>
-        <p class="wait">Fique em pé ao lado do grupo e olhe para quem está falando. Se fizerem perguntas no final, toque em <b>?</b> para ver as suas.</p>`
-      : `<p class="big">Hora das <span class="h">perguntas</span></p>
-        <p class="wait">Os cinco dão um passo à frente. Sorriam e esperem. Não entendeu a pergunta? Diga <b>"Sorry, can you repeat, please?"</b> Toque em <b>?</b> para ver as respostas.</p>`}
+      ${!e && c.p.next
+        ? `<p class="big">Passe para <span class="h">${esc(c.p.next)}</span></p><span class="say">"${esc(c.p.next)}, please."</span>
+           <p class="wait">Fique em pé ao lado do grupo e olhe para quem está falando. Se fizerem perguntas no final, toque em <b>?</b> para ver as suas.</p>`
+        : `<p class="big">Hora das <span class="h">perguntas</span></p>
+           <p class="wait">Os cinco dão um passo à frente. Sorriam e esperem. Não entendeu a pergunta? Diga <b>"Sorry, can you repeat, please?"</b> Toque em <b>?</b> para ver as respostas.</p>`}
     </div>`;
   }
   view.insertAdjacentHTML('beforeend', html);
   const card = view.querySelector('.card');
   if (dir) { card.classList.add('enter'); if (dir < 0) card.classList.add('back'); }
-  // próxima fala
   const nx = state.cards[state.i + 1];
   if (nx) {
     const t = nx.kind === 'line' ? (nx.p !== c.p && state.ensemble ? `${nx.p.first}: ${nx.en}` : nx.en)
       : nx.kind === 'turn' ? `Vez de ${nx.p.first}` : (nx.p.next ? `Passar a palavra para ${nx.p.next}` : 'Perguntas');
     view.insertAdjacentHTML('beforeend', `<div class="next"><b>Próxima:</b> ${esc(t)}</div>`);
   }
-  view.insertAdjacentHTML('beforeend', `<div class="count">${state.i + 1}/${state.cards.length}</div>`);
+  view.insertAdjacentHTML('beforeend', `<div class="counter">${state.i + 1}/${state.cards.length}</div>`);
   if (state.i === 0 && !state.start) view.insertAdjacentHTML('beforeend', `<div class="hint">Toque na tela para avançar →</div>`);
   $('#prog').style.transform = `scaleX(${(state.i + 1) / state.cards.length})`;
 }
@@ -276,51 +423,52 @@ function go(d) {
   if (n === state.i) { if (d > 0) { const f = $('#flash'); f.classList.remove('on'); void f.offsetWidth; f.classList.add('on'); } return; }
   state.i = n; render(d);
 }
-
 function elapsed() { return state.start ? (performance.now() - state.start) / 1000 : 0; }
 function drawTimer() {
   const el = $('#timer'); const s = elapsed();
   el.innerHTML = `${fmt(s)} <small>/ ${fmt(state.target)}</small>`;
   el.className = 'timer' + (s > state.target ? ' over' : s > state.target - 10 ? ' warn' : '');
 }
-
 async function keepAwake() {
   try { if ('wakeLock' in navigator && !document.hidden) state.wake = await navigator.wakeLock.request('screen'); } catch (e) {}
 }
 document.addEventListener('visibilitychange', () => { if (!document.hidden && !$('#stage').hidden) keepAwake(); });
 
-/* ---------- PERGUNTAS ---------- */
+/* ---------- perguntas ---------- */
 function openSheet() {
   const people = state.ensemble ? DATA.people : state.people;
   const qs = people.flatMap((p) => p.questions.map((q) => ({ p, q })));
   $('#sheetIn').innerHTML = `
     <button class="icon close" id="btnClose" aria-label="Fechar">✕</button>
     <h2>Se fizerem perguntas</h2>
-    <p class="q">Responda curto. Fale devagar.</p>
+    <p class="q">Responda curto e fale devagar.</p>
     <h3>${state.ensemble ? 'Perguntas de cada um' : 'As suas perguntas'}</h3>
     ${qs.map(({ p, q }) => `<div class="row">${state.ensemble ? `<div class="who">${esc(p.first)}</div>` : ''}
-      <div class="q">Se perguntarem: <b>${esc(q[0])}</b> (${esc(q[1])})</div>
+      <p class="q">Se perguntarem: <b>${esc(q[0])}</b> (${esc(q[1])})</p>
       <div class="a">${esc(q[2])}</div><div class="p">${esc(q[3])}</div></div>`).join('')}
     <h3>Frases de socorro</h3>
     ${DATA.help.map((h) => `<div class="row"><div class="a">${esc(h[0])}</div><div class="p">${esc(h[1])}</div></div>`).join('')}
     <h3>Lembrete</h3>
-    <div class="row"><div class="q">Avaliações, chat, notificações, feed e planos ainda não existem no site. Se perguntarem, responda: <b>"That is in our future plans."</b></div></div>`;
+    <div class="row"><p class="q">Avaliações, chat, notificações, feed e planos ainda não existem no site. Se perguntarem, responda: <b>"That is in our future plans."</b></p></div>`;
   $('#sheet').hidden = false;
   $('#btnClose').onclick = closeSheet;
 }
 function closeSheet() { $('#sheet').hidden = true; }
 $('#sheet').addEventListener('click', (e) => { if (e.target.id === 'sheet') closeSheet(); });
 
-/* ---------- EVENTOS ---------- */
+/* ---------- eventos ---------- */
 document.addEventListener('click', (e) => {
   const g = e.target.closest('[data-go]');
-  if (g) { location.hash = g.dataset.go; }
+  if (g) { location.hash = g.dataset.go; return; }
+  const t = e.target.closest('[data-theme-set]');
+  if (t && t.dataset.themeSet !== document.documentElement.dataset.theme) toggleTheme();
 });
 $('#view').addEventListener('click', (e) => { go(e.target.closest('#zoneBack') ? -1 : 1); });
 $('#btnHome').onclick = () => { location.hash = ''; };
 $('#btnPt').onclick = () => { pt = !pt; store.set('pt', pt); $('#btnPt').setAttribute('aria-pressed', pt); render(0); };
 $('#btnBigger').onclick = () => setFs(fs + 0.1);
 $('#btnSmaller').onclick = () => setFs(fs - 0.1);
+$('#btnTheme').onclick = toggleTheme;
 $('#btnQa').onclick = openSheet;
 function setFs(v) { fs = Math.round(Math.max(0.7, Math.min(1.6, v)) * 10) / 10; store.set('fs', fs); document.documentElement.style.setProperty('--fs', fs); }
 document.addEventListener('keydown', (e) => {
@@ -330,7 +478,6 @@ document.addEventListener('keydown', (e) => {
   else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); go(-1); }
   else if (e.key === 'Escape') location.hash = '';
 });
-// deslizar o dedo
 let tx = null;
 $('#view').addEventListener('touchstart', (e) => { tx = e.touches[0].clientX; }, { passive: true });
 $('#view').addEventListener('touchend', (e) => {
@@ -346,6 +493,8 @@ function route() {
 }
 window.addEventListener('hashchange', route);
 $('#btnPt').setAttribute('aria-pressed', pt);
+setTheme(document.documentElement.dataset.theme);
+drawClock(); setInterval(drawClock, 15000);
 route();
 </script>
 </body>
